@@ -6,65 +6,78 @@
 
 <section class="hero">
     <div class="hero-inner">
-        <div class="hero-badge">Personal Finance Tracker</div>
+        <div class="hero-badge">
+            <span class="badge-dot">&bull;</span>
+            Free to use &middot; No credit card needed
+        </div>
         <h1 class="hero-title">
-            Know where your<br>
-            <em>money goes</em>
+            Track every rupee.<br>
+            <span class="hero-title-highlight">Know where it goes.</span>
         </h1>
         <p class="hero-subtitle">
-            Log expenses, understand your spending patterns,
-            and take control of your financial life —
-            one transaction at a time.
+            Spendly helps you log expenses, spot patterns, and stay
+            on budget &mdash; without the spreadsheet headache.
         </p>
         <div class="hero-actions">
-            <a href="{{ url_for('register') }}" class="btn-primary">Start tracking free</a>
-            <a href="{{ url_for('login') }}" class="btn-ghost">Sign in</a>
+            <a href="{{ url_for('register') }}" class="btn-primary">Create free account</a>
+            <a href="#" class="btn-secondary" id="seeHowItWorksBtn">See how it works</a>
         </div>
     </div>
     <div class="hero-visual">
-        <div class="mock-card">
-            <div class="mock-card-header">
-                <span class="mock-label">March 2026</span>
-                <span class="mock-total">Rs.12,450</span>
+        <div class="mockup-window">
+            <div class="mockup-header">
+                <span class="dot dot-red"></span>
+                <span class="dot dot-yellow"></span>
+                <span class="dot dot-green"></span>
             </div>
-            <div class="mock-bars">
-                <div class="mock-bar-row">
-                    <span class="mock-cat">Bills</span>
-                    <div class="mock-bar-track">
-                        <div class="mock-bar" style="width: 72%"></div>
+            <div class="mockup-body">
+                <div class="summary-cards">
+                    <div class="summary-card">
+                        <span class="card-label">This month</span>
+                        <span class="card-value">Rs.18,240</span>
+                        <span class="card-trend trend-down">+12% vs last</span>
                     </div>
-                    <span class="mock-amt">Rs.4,500</span>
+                    <div class="summary-card">
+                        <span class="card-label">Budget left</span>
+                        <span class="card-value">Rs.6,760</span>
+                        <span class="card-trend trend-up">43% remaining</span>
+                    </div>
+                    <div class="summary-card">
+                        <span class="card-label">Transactions</span>
+                        <span class="card-value">34</span>
+                        <span class="card-trend trend-neutral">this month</span>
+                    </div>
                 </div>
-                <div class="mock-bar-row">
-                    <span class="mock-cat">Food</span>
-                    <div class="mock-bar-track">
-                        <div class="mock-bar mock-bar-2" style="width: 52%"></div>
+                <div class="progress-section">
+                    <div class="progress-row">
+                        <span class="progress-label">Food</span>
+                        <div class="progress-bar-container">
+                            <div class="progress-bar fill-food" style="width: 68%;"></div>
+                        </div>
                     </div>
-                    <span class="mock-amt">₹3,200</span>
-                </div>
-                <div class="mock-bar-row">
-                    <span class="mock-cat">Health</span>
-                    <div class="mock-bar-track">
-                        <div class="mock-bar mock-bar-3" style="width: 33%"></div>
+                    <div class="progress-row">
+                        <span class="progress-label">Travel</span>
+                        <div class="progress-bar-container">
+                            <div class="progress-bar fill-travel" style="width: 52%;"></div>
+                        </div>
                     </div>
-                    <span class="mock-amt">₹2,050</span>
-                </div>
-                <div class="mock-bar-row">
-                    <span class="mock-cat">Transport</span>
-                    <div class="mock-bar-track">
-                        <div class="mock-bar mock-bar-4" style="width: 28%"></div>
+                    <div class="progress-row">
+                        <span class="progress-label">Bills</span>
+                        <div class="progress-bar-container">
+                            <div class="progress-bar fill-bills" style="width: 45%;"></div>
+                        </div>
                     </div>
-                    <span class="mock-amt">₹1,800</span>
                 </div>
             </div>
         </div>
     </div>
 </section>
 
+
 <section class="features">
     <div class="features-inner">
         <div class="feature-card">
-            <div class="feature-icon">₹</div>
+            <div class="feature-icon">Rs.</div>
             <h3 class="feature-title">Log expenses instantly</h3>
             <p class="feature-body">Add any expense in seconds. Category, amount, date, description — all in one simple form.</p>
         </div>
@@ -89,4 +102,63 @@
     </div>
 </section>
 
+<!-- Video Modal Overlay -->
+<div id="videoModal" class="modal-overlay">
+    <div class="modal-container">
+        <button class="modal-close" id="closeModalBtn">&times;</button>
+        <div class="modal-video-wrapper">
+            <iframe id="videoPlayer" src="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const seeHowItWorksBtn = document.getElementById('seeHowItWorksBtn');
+    const videoModal = document.getElementById('videoModal');
+    const closeModalBtn = document.getElementById('closeModalBtn');
+    const videoPlayer = document.getElementById('videoPlayer');
+    
+    // Placeholder YouTube video URL (embed format)
+    const videoUrl = "https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1";
+    
+    if (seeHowItWorksBtn && videoModal && videoPlayer) {
+        seeHowItWorksBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            videoPlayer.src = videoUrl;
+            videoModal.style.display = 'flex';
+            document.body.style.overflow = 'hidden'; // Disable scroll on body
+        });
+    }
+    
+    function closeModal() {
+        if (videoModal && videoPlayer) {
+            videoModal.style.display = 'none';
+            videoPlayer.src = ''; // Clear source to stop playback
+            document.body.style.overflow = ''; // Re-enable scroll
+        }
+    }
+    
+    if (closeModalBtn) {
+        closeModalBtn.addEventListener('click', closeModal);
+    }
+    
+    if (videoModal) {
+        videoModal.addEventListener('click', function(e) {
+            if (e.target === videoModal) {
+                closeModal();
+            }
+        });
+    }
+    
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && videoModal.style.display === 'flex') {
+            closeModal();
+        }
+    });
+});
+</script>
 {% endblock %}
