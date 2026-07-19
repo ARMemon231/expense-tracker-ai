@@ -1,0 +1,23 @@
+╭─── Claude Code v2.1.75 ──────────────────────────────────────────────────────╮
+│                                                    │ Tips for getting        │
+│                 Welcome back Ateeq!                │ started                 │
+│                                                    │ Run /init to create a … │
+│                       ▐▛███▜▌                      │ ─────────────────────── │
+│                      ▝▜█████▛▘                     │ Recent activity         │
+│                        ▘▘ ▝▝                       │ No recent activity      │
+│    glm-4.7:cloud · API Usage Billing · Ateeq’s     │                         │
+│    Individual Org                                  │                         │
+│             D:\vs code\expense-tracker             │                         │
+╰──────────────────────────────────────────────────────────────────────────────╯
+
+  ↑ Opus now defaults to 1M context · 5x more room, same pricing
+
+
+ ⚠Auth conflict: Both a token (ANTHROPIC_AUTH_TOKEN) and an API key (/login 
+  managed key) are set. This may lead to unexpected behavior.
+    • Trying to use ANTHROPIC_AUTH_TOKEN? claude /logout
+    • Trying to use /login managed key? Unset the ANTHROPIC_AUTH_TOKEN 
+    environment variable.
+
+❯ can you see my folder if yes tell what this proect does                       
+  ⎿  Interrupted · What should Claude do instead?
