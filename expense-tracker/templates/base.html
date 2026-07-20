@@ -12,6 +12,8 @@
 </head>
 <body>
 
+    {% set flashed_messages = get_flashed_messages(with_categories=true) %}
+
     <nav class="navbar">
         <div class="nav-inner">
             <a href="{{ url_for('landing') }}" class="nav-brand">
@@ -19,23 +21,26 @@
                 <span class="brand-name">Spendly</span>
             </a>
             <div class="nav-links">
-                <a href="{{ url_for('login') }}">Sign in</a>
-                <a href="{{ url_for('register') }}" class="nav-cta">Get started</a>
+                {% if session.get("user_id") %}
+                    <a href="{{ url_for('profile') }}">Profile</a>
+                    <a href="{{ url_for('logout') }}" class="nav-cta">Sign out</a>
+                {% else %}
+                    <a href="{{ url_for('login') }}">Sign in</a>
+                    <a href="{{ url_for('register') }}" class="nav-cta">Get started</a>
+                {% endif %}
             </div>
         </div>
     </nav>
 
-    {% with messages = get_flashed_messages(with_categories=true) %}
-      {% if messages %}
-        {% for category, message in messages %}
-          {% if category != 'error' %}
-            <div class="flash-messages">
-              <div class="flash-message flash-{{ category }}">{{ message }}</div>
-            </div>
-          {% endif %}
-        {% endfor %}
-      {% endif %}
-    {% endwith %}
+    {% if flashed_messages %}
+      {% for category, message in flashed_messages %}
+        {% if category != 'error' and not (category == 'success' and request.path in [url_for('login'), url_for('register')]) %}
+          <div class="flash-messages">
+            <div class="flash-message flash-{{ category }}">{{ message }}</div>
+          </div>
+        {% endif %}
+      {% endfor %}
+    {% endif %}
 
     <main class="main-content">
 
