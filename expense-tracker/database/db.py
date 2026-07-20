@@ -76,3 +76,20 @@ def seed_db():
             expenses
         )
         conn.commit()
+
+def create_user(name, email, password_hash):
+    """
+    Creates a new user in the database.
+    Returns the user ID on success, or None if the email already exists.
+    """
+    try:
+        with get_db() as conn:
+            cursor = conn.execute(
+                'INSERT INTO users (name, email, password_hash) VALUES (?, ?, ?)',
+                (name, email, password_hash)
+            )
+            conn.commit()
+            return cursor.lastrowid
+    except sqlite3.IntegrityError:
+        # This handles the UNIQUE constraint on email
+        return None
