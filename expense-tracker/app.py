@@ -25,9 +25,14 @@ def register():
         name = request.form.get("name")
         email = request.form.get("email")
         password = request.form.get("password")
+        confirm_password = request.form.get("confirm_password")
 
-        if not name or not email or not password:
+        if not name or not email or not password or not confirm_password:
             flash("All fields are required", "error")
+            return render_template("register.html")
+
+        if password != confirm_password:
+            flash("Passwords do not match", "error")
             return render_template("register.html")
 
         hashed_pw = generate_password_hash(password)
