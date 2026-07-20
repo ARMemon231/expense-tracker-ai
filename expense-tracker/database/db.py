@@ -93,3 +93,11 @@ def create_user(name, email, password_hash):
     except sqlite3.IntegrityError:
         # This handles the UNIQUE constraint on email
         return None
+
+def get_user_by_email(email):
+    """
+    Retrieves a user from the database by their email.
+    Returns the user row if found, otherwise None.
+    """
+    with get_db() as conn:
+        return conn.execute('SELECT * FROM users WHERE email = ?', (email,)).fetchone()
