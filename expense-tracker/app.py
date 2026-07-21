@@ -67,8 +67,7 @@ def login():
         user = get_user_by_email(email)
         if user and check_password_hash(user["password_hash"], password):
             session["user_id"] = user["id"]
-            flash("Logged in successfully!", "success")
-            return redirect(url_for("landing"))
+            return redirect(url_for("profile"))
 
         flash("Invalid email or password.", "error")
         return render_template("login.html")
@@ -99,7 +98,38 @@ def logout():
 
 @app.route("/profile")
 def profile():
-    return "Profile page — coming in Step 4"
+    if not session.get("user_id"):
+        flash("Please log in to access your profile.", "error")
+        return redirect(url_for("login"))
+
+    profile_data = {
+        "user": {
+            "name": "Alex Rivera",
+            "email": "alex@example.com",
+            "initials": "AR",
+            "joined": "October 2023"
+        },
+        "stats": {
+            "total_spent": "$2,450.00",
+            "tx_count": 42,
+            "top_category": "Dining"
+        },
+        "transactions": [
+            {"date": "2026-07-20", "desc": "Grocery Store", "category": "Food", "amount": "$85.00"},
+            {"date": "2026-07-18", "desc": "Monthly Internet", "category": "Bills", "amount": "$60.00"},
+            {"date": "2026-07-15", "desc": "Gas Station", "category": "Transport", "amount": "$45.00"},
+            {"date": "2026-07-12", "desc": "Amazon Order", "category": "Shopping", "amount": "$120.00"},
+            {"date": "2026-07-10", "desc": "Coffee Shop", "category": "Food", "amount": "$6.50"},
+            {"date": "2026-07-05", "desc": "Electric Bill", "category": "Bills", "amount": "$110.00"},
+        ],
+        "categories": [
+            {"name": "Food", "amount": "$600", "percent": 25},
+            {"name": "Bills", "amount": "$800", "percent": 33},
+            {"name": "Transport", "amount": "$400", "percent": 16},
+            {"name": "Shopping", "amount": "$650", "percent": 26},
+        ]
+    }
+    return render_template("profile.html", profile=profile_data)
 
 
 @app.route("/expenses/add")

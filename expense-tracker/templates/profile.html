@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+
+{% block title %}My Profile | Spendly{% endblock %}
+
+{% block head %}
+<style>
+    /* Profile page specific additions are handled in style.css,
+       but we keep the structural layout here */
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="profile-container">
+    <header class="profile-header">
+        <h1 class="profile-title">My Profile</h1>
+    </header>
+
+    <!-- User Info Card -->
+    <section class="profile-user-card">
+        <div class="user-info-wrapper">
+            <div class="avatar-circle">
+                {{ profile.user.initials }}
+            </div>
+            <div class="user-details">
+                <h2 class="user-name">{{ profile.user.name }}</h2>
+                <div class="user-email-row">
+                    <i data-lucide="mail" class="inline-icon"></i>
+                    <span class="user-email">{{ profile.user.email }}</span>
+                </div>
+                <div class="user-meta-row">
+                    <i data-lucide="calendar" class="inline-icon"></i>
+                    <span class="user-meta">Member since {{ profile.user.joined }}</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Summary Stats Row -->
+    <section class="profile-stats-row">
+        <div class="summary-card">
+            <div class="stat-icon">
+                <i data-lucide="wallet"></i>
+            </div>
+            <div class="stat-content">
+                <span class="stat-label">Total Spent</span>
+                <span class="stat-value">{{ profile.stats.total_spent }}</span>
+            </div>
+        </div>
+        <div class="summary-card">
+            <div class="stat-icon">
+                <i data-lucide="receipt-text"></i>
+            </div>
+            <div class="stat-content">
+                <span class="stat-label">Transactions</span>
+                <span class="stat-value">{{ profile.stats.tx_count }}</span>
+            </div>
+        </div>
+        <div class="summary-card">
+            <div class="stat-icon">
+                <i data-lucide="utensils"></i>
+            </div>
+            <div class="stat-content">
+                <span class="stat-label">Top Category</span>
+                <span class="stat-value">{{ profile.stats.top_category }}</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content Grid -->
+    <div class="profile-grid">
+        <!-- Transaction History -->
+        <section class="profile-section">
+            <div class="dashboard-card">
+                <h3 class="section-title">Recent Transactions</h3>
+                <div class="table-responsive">
+                    <table class="dashboard-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Description</th>
+                                <th>Category</th>
+                                <th class="text-right">Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for tx in profile.transactions %}
+                            <tr>
+                                <td>{{ tx.date }}</td>
+                                <td>{{ tx.desc }}</td>
+                                <td>
+                                    <span class="category-badge badge-{{ tx.category|lower }}">
+                                        {{ tx.category }}
+                                    </span>
+                                </td>
+                                <td class="text-right amount">{{ tx.amount }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- Category Breakdown -->
+        <section class="profile-section">
+            <div class="dashboard-card">
+                <h3 class="section-title">Category Breakdown</h3>
+                <div class="category-list">
+                    {% for cat in profile.categories %}
+                    <div class="category-item">
+                        <div class="category-info">
+                            <span class="cat-name">{{ cat.name }}</span>
+                            <span class="cat-amount">{{ cat.amount }}</span>
+                        </div>
+                        <div class="progress-bar-container">
+                            <div class="progress-bar" style="width: {{ cat.percent }}%;"></div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        lucide.createIcons();
+    });
+</script>
+{% endblock %}
