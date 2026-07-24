@@ -1,6 +1,14 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, session
 from werkzeug.security import generate_password_hash, check_password_hash
 from database.db import init_db, seed_db, create_user, get_user_by_email
+from database.queries import get_user_by_id, get_summary_stats, get_recent_transactions, get_category_breakdown
+
+app = Flask(__name__)
+app.secret_key = "spendly_secret_key_for_flashing"
+
+with app.app_context():
+    init_db()
+    seed_db()
 
 app = Flask(__name__)
 app.secret_key = "spendly_secret_key_for_flashing"
@@ -102,31 +110,47 @@ def profile():
         flash("Please log in to access your profile.", "error")
         return redirect(url_for("login"))
 
+    user_id = session["user_id"]
+
+    # Fetch dynamic data from queries.py
+    user_info = get_user_by_id(user_id)
+    if not user_info:
+        flash("User profile not found.", "error")
+        return redirect(url_for("login"))
+
+    stats = get_summary_stats(user_id)
+    txs = get_recent_transactions(user_id)
+    cats = get_category_breakdown(user_id)
+
+    # Format data for the template
     profile_data = {
         "user": {
-            "name": "Alex Rivera",
-            "email": "alex@example.com",
-            "initials": "AR",
-            "joined": "October 2023"
+            "name": user_info["name"],
+            "email": user_info["email"],
+            "initials": "".join([n[0].upper() for n in user_info["name"].split()]),
+            "joined": user_info["member_since"]
         },
         "stats": {
-            "total_spent": "$2,450.00",
-            "tx_count": 42,
-            "top_category": "Dining"
+            "total_spent": f"Rs {stats['total_spent']:,.2f}",
+            "tx_count": stats["transaction_count"],
+            "top_category": stats["top_category"]
         },
         "transactions": [
-            {"date": "2026-07-20", "desc": "Grocery Store", "category": "Food", "amount": "$85.00"},
-            {"date": "2026-07-18", "desc": "Monthly Internet", "category": "Bills", "amount": "$60.00"},
-            {"date": "2026-07-15", "desc": "Gas Station", "category": "Transport", "amount": "$45.00"},
-            {"date": "2026-07-12", "desc": "Amazon Order", "category": "Shopping", "amount": "$120.00"},
-            {"date": "2026-07-10", "desc": "Coffee Shop", "category": "Food", "amount": "$6.50"},
-            {"date": "2026-07-05", "desc": "Electric Bill", "category": "Bills", "amount": "$110.00"},
+            {
+                "date": tx["date"],
+                "desc": tx["desc"],
+                "category": tx["category"],
+                "amount": f"Rs {tx['amount']:,.2f}"
+            }
+            for tx in txs
         ],
         "categories": [
-            {"name": "Food", "amount": "$600", "percent": 25},
-            {"name": "Bills", "amount": "$800", "percent": 33},
-            {"name": "Transport", "amount": "$400", "percent": 16},
-            {"name": "Shopping", "amount": "$650", "percent": 26},
+            {
+                "name": cat["name"],
+                "amount": f"Rs {cat['amount']:,.2f}",
+                "percent": cat["pct"]
+            }
+            for cat in cats
         ]
     }
     return render_template("profile.html", profile=profile_data)
