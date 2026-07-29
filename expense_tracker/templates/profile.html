@@ -11,17 +11,15 @@
 
 {% block content %}
 <div class="profile-container">
-    {% with messages = get_flashed_messages(with_categories=true) %}
-      {% if messages %}
-        <div class="flash-messages">
-          {% for category, message in messages %}
-            <div class="flash-message flash-{{ category }}">
-              {{ message }}
-            </div>
-          {% endfor %}
-        </div>
-      {% endif %}
-    {% endwith %}
+    {% if flashed_messages %}
+      <div class="flash-messages">
+        {% for category, message in flashed_messages %}
+          <div class="flash-message flash-{{ category }}">
+            {{ message }}
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
 
     <header class="profile-header">
         <h1 class="profile-title">My Profile</h1>
@@ -98,6 +96,9 @@
         <section class="profile-section">
             <div class="dashboard-card">
                 <h3 class="section-title">Recent Transactions</h3>
+                <div class="table-actions" style="display: flex; justify-content: flex-end; margin-bottom: 1rem;">
+                    <a href="{{ url_for('add_expense') }}" class="btn-add-expense" style="background-color: var(--accent); color: white; padding: 0.5rem 1rem; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 0.9rem;">+ Add Expense</a>
+                </div>
                 <div class="table-responsive">
                     <table class="dashboard-table">
                         <thead>

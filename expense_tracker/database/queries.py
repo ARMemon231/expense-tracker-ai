@@ -23,6 +23,16 @@ def get_user_by_id(user_id):
             "member_since": member_since
         }
 
+def insert_expense(db, user_id, amount, category, date, description):
+    """
+    Inserts a new expense record.
+    description should be None if blank.
+    """
+    desc = description if description and description.strip() else None
+    query = 'INSERT INTO expenses (user_id, amount, category, date, description) VALUES (?, ?, ?, ?, ?)'
+    db.execute(query, (user_id, amount, category, date, desc))
+    db.commit()
+
 def get_summary_stats(user_id, date_from=None, date_to=None):
     """
     Calculates total spend, transaction count, and identifying the top category.

@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+
+{% block title %}Add Expense — Spendly{% endblock %}
+
+{% block head %}
+<style>
+    .add-expense-container {
+        max-width: 600px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+    }
+    .expense-form-card {
+        background: var(--paper);
+        border: 1px solid #ddd;
+        border-radius: 16px;
+        padding: 2rem;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+    .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+        color: var(--ink);
+    }
+    .form-control {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        font-size: 1rem;
+        box-sizing: border-box;
+    }
+    .form-control:focus {
+        outline: none;
+        border-color: var(--accent);
+        box-shadow: 0 0 0 2px rgba(26, 71, 42, 0.1);
+    }
+    .btn-save {
+        background-color: var(--accent);
+        color: white;
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        width: 100%;
+        font-size: 1rem;
+        transition: opacity 0.2s;
+    }
+    .btn-save:hover {
+        opacity: 0.9;
+    }
+    .btn-cancel {
+        display: block;
+        text-align: center;
+        margin-top: 1rem;
+        color: #666;
+        text-decoration: none;
+        font-size: 0.9rem;
+    }
+    .btn-cancel:hover {
+        text-decoration: underline;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="add-expense-container">
+    <div class="expense-form-card">
+        <h1 style="margin-top: 0; margin-bottom: 1.5rem; font-family: 'DM Serif Display', serif;">Add New Expense</h1>
+
+        {% if flashed_messages %}
+          <div class="flash-messages" style="margin-bottom: 1.5rem;">
+            {% for category, message in flashed_messages %}
+              <div class="flash-message flash-{{ category }}">{{ message }}</div>
+            {% endfor %}
+          </div>
+        {% endif %}
+
+        <form method="POST" action="{{ url_for('add_expense') }}">
+            <div class="form-group">
+                <label for="amount">Amount (Rs)</label>
+                <input type="number" id="amount" name="amount"
+                       class="form-control" step="0.01" min="0.01" required
+                       value="{{ amount if amount else '' }}" placeholder="0.00">
+            </div>
+
+            <div class="form-group">
+                <label for="category">Category</label>
+                <select id="category" name="category" class="form-control" required>
+                    <option value="" disabled {{ 'selected' if not category }}>Select a category</option>
+                    {% for cat in categories %}
+                    <option value="{{ cat }}" {{ 'selected' if cat == category }}>{{ cat }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="date">Date</label>
+                <input type="date" id="date" name="date" class="form-control" required
+                       value="{{ date if date else today }}">
+            </div>
+
+            <div class="form-group">
+                <label for="description">Description (Optional)</label>
+                <input type="text" id="description" name="description" class="form-control"
+                       maxlength="200" value="{{ description if description else '' }}" placeholder="e.g. Weekly groceries">
+            </div>
+
+            <button type="submit" class="btn-save">Save Expense</button>
+            <a href="{{ url_for('profile') }}" class="btn-cancel">Cancel and go back</a>
+        </form>
+    </div>
+</div>
+{% endblock %}

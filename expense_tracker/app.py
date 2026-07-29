@@ -1,8 +1,9 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, session, send_from_directory
 from werkzeug.security import generate_password_hash, check_password_hash
-from database.db import init_db, seed_db, create_user, get_user_by_email
-from database.queries import get_user_by_id, get_summary_stats, get_recent_transactions, get_category_breakdown
+from database.db import init_db, seed_db, create_user, get_user_by_email, get_db
+from database.queries import get_user_by_id, get_summary_stats, get_recent_transactions, get_category_breakdown, insert_expense
 from datetime import datetime, timedelta
+
 
 app = Flask(__name__)
 app.secret_key = "spendly_secret_key_for_flashing"
@@ -209,9 +210,61 @@ def profile():
     return render_template("profile.html", profile=profile_data, date_from=validated_from, date_to=validated_to, presets=presets)
 
 
-@app.route("/expenses/add")
+@app.route("/expenses/add", methods=["GET", "POST"])
 def add_expense():
-    return "Add expense — coming in Step 7"
+    if not session.get("user_id"):
+        flash("Please log in to access this page.", "error")
+        return redirect(url_for("login"))
+
+    user_id = session["user_id"]
+    allowed_categories = ["Food", "Transport", "Bills", "Health", "Entertainment", "Shopping", "Other"]
+
+    if request.method == "POST":
+        amount_raw = request.form.get("amount", "").strip()
+        category = request.form.get("category", "").strip()
+        date = request.form.get("date", "").strip()
+        description = request.form.get("description", "").strip()
+
+        errors = []
+        try:
+            amount = float(amount_raw)
+            if amount <= 0:
+                errors.append("Amount must be a positive number greater than zero.")
+        except (ValueError, TypeError):
+            errors.append("Please enter a valid numeric amount.")
+
+        if category not in allowed_categories:
+            errors.append("Please select a valid category from the list.")
+
+        if not date:
+            errors.append("Date is required.")
+        else:
+            try:
+                datetime.strptime(date, "%Y-%m-%d")
+            except ValueError:
+                errors.append("Invalid date format. Please use YYYY-MM-DD.")
+
+        if errors:
+            for err in errors:
+                flash(err, "error")
+            return render_template("add_expense.html",
+                                 amount=amount_raw,
+                                 category=category,
+                                 date=date,
+                                 description=description,
+                                 categories=allowed_categories)
+
+        # Success: insert into DB
+        with get_db() as db:
+            insert_expense(db, user_id, amount, category, date, description)
+
+        flash("Expense added successfully!", "success")
+        return redirect(url_for("profile"))
+
+    # GET request: render form with today's date as default
+    return render_template("add_expense.html",
+                         today=datetime.now().strftime("%Y-%m-%d"),
+                         categories=allowed_categories)
 
 
 @app.route("/expenses/<int:id>/edit")
