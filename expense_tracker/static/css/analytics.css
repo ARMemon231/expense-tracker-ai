@@ -1,0 +1,112 @@
+.analytics-coming-soon {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 80vh;
+    padding: 2rem;
+    text-align: center;
+    color: var(--ink);
+    font-family: 'Inter', sans-serif;
+}
+
+.analytics-coming-soon .hero-section {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.analytics-coming-soon .badge {
+    display: inline-block;
+    background-color: var(--accent);
+    color: var(--paper);
+    padding: 0.5rem 1rem;
+    border-radius: 50px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 1.5rem;
+}
+
+.analytics-coming-soon .title {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(2.5rem, 8vw, 4rem);
+    line-height: 1.1;
+    margin-bottom: 1.5rem;
+    color: var(--ink);
+}
+
+.analytics-coming-soon .subtitle {
+    font-size: 1.25rem;
+    color: #666;
+    margin-bottom: 3rem;
+    line-height: 1.6;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.analytics-coming-soon .email-capture {
+    display: flex;
+    gap: 10px;
+    width: 100%;
+    max-width: 500px;
+    margin: 0 auto 3rem auto;
+}
+
+.analytics-coming-soon .email-input {
+    flex: 1;
+    padding: 1rem 1.5rem;
+    border: 2px solid #ddd;
+    border-radius: 12px;
+    font-size: 1rem;
+    outline: none;
+    transition: border-color 0.2s ease;
+}
+
+.analytics-coming-soon .email-input:focus {
+    border-color: var(--accent);
+}
+
+.analytics-coming-soon .btn-notify {
+    background-color: var(--accent);
+    color: var(--paper);
+    padding: 1rem 2rem;
+    border-radius: 12px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.analytics-coming-soon .btn-notify:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.1);
+}
+
+.analytics-coming-soon .footer-links {
+    display: flex;
+    gap: 2rem;
+    margin-top: 2rem;
+    font-size: 0.9rem;
+}
+
+.analytics-coming-soon .footer-links a {
+    color: #888;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.analytics-coming-soon .footer-links a:hover {
+    color: var(--accent);
+}
+
+@media (max-width: 600px) {
+    .analytics-coming-soon .email-capture {
+        flex-direction: column;
+    }
+
+    .analytics-coming-soon .btn-notify {
+        width: 100%;
+    }
+}

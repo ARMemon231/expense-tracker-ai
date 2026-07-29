@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}Analytics - Coming Soon{% endblock %}
+
+{% block head %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/analytics.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="analytics-coming-soon">
+    <div class="hero-section">
+        <div class="badge">Coming Soon</div>
+        <h1 class="title">Unlocking Insights <br>Into Your Spending</h1>
+        <p class="subtitle">
+            We're building a powerful analytics engine to help you visualize your financial habits and optimize your budget with AI-driven insights.
+        </p>
+
+        <form class="email-capture" action="#" method="POST">
+            <input type="email" name="email" class="email-input" placeholder="Enter your email address" required>
+            <button type="submit" class="btn-notify">Notify Me</button>
+        </form>
+
+        <div class="footer-links">
+            <a href="{{ url_for('profile') }}">← Return to Dashboard</a>
+            <a href="{{ url_for('profile') }}">View Profile</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
