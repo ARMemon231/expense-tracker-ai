@@ -1,0 +1,286 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Expense — Spendly{% endblock %}
+
+{% block head %}
+<style>
+    /* ── Edit Expense Page ─────────────────────────────── */
+    .edit-expense-section {
+        min-height: calc(100vh - 60px - 100px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 3rem 2rem;
+    }
+
+    .edit-expense-wrapper {
+        width: 100%;
+        max-width: 520px;
+    }
+
+    /* Header */
+    .edit-header {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .edit-header-icon {
+        width: 56px;
+        height: 56px;
+        background: var(--accent-light);
+        color: var(--accent);
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 1rem;
+        font-size: 1.5rem;
+    }
+
+    .edit-title {
+        font-family: var(--font-display);
+        font-size: 2rem;
+        color: var(--ink);
+        margin-bottom: 0.35rem;
+    }
+
+    .edit-subtitle {
+        font-size: 0.9rem;
+        color: var(--ink-muted);
+    }
+
+    /* Card */
+    .edit-card {
+        background: var(--paper-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-md);
+        padding: 2rem;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03);
+    }
+
+    /* Form groups */
+    .edit-card .form-group {
+        margin-bottom: 1.25rem;
+    }
+
+    .edit-card .form-group:last-of-type {
+        margin-bottom: 1.75rem;
+    }
+
+    .edit-card .form-group label {
+        display: block;
+        font-size: 0.85rem;
+        font-weight: 500;
+        color: var(--ink-soft);
+        margin-bottom: 0.4rem;
+    }
+
+    .edit-card .form-input {
+        width: 100%;
+        padding: 0.6rem 0.875rem;
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        font-family: var(--font-body);
+        font-size: 0.95rem;
+        color: var(--ink);
+        background: var(--paper);
+        outline: none;
+        transition: border-color 0.2s, box-shadow 0.2s;
+        box-sizing: border-box;
+    }
+
+    .edit-card .form-input:focus {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px rgba(26, 71, 42, 0.08);
+    }
+
+    .edit-card .form-input::placeholder {
+        color: var(--ink-faint);
+    }
+
+    /* Amount field with currency label */
+    .input-with-prefix {
+        position: relative;
+    }
+
+    .input-prefix {
+        position: absolute;
+        left: 0.875rem;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: var(--ink-muted);
+        pointer-events: none;
+    }
+
+    .input-with-prefix .form-input {
+        padding-left: 2.25rem;
+    }
+
+    /* Actions row */
+    .edit-actions {
+        display: flex;
+        gap: 0.75rem;
+    }
+
+    .btn-update {
+        flex: 1;
+        padding: 0.7rem;
+        background: var(--ink);
+        color: var(--paper);
+        border: none;
+        border-radius: var(--radius-sm);
+        font-family: var(--font-body);
+        font-size: 0.95rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background 0.2s, transform 0.15s;
+    }
+
+    .btn-update:hover {
+        background: var(--accent);
+        transform: translateY(-1px);
+    }
+
+    .btn-update:active {
+        transform: translateY(0);
+    }
+
+    .btn-back {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.7rem 1.25rem;
+        background: transparent;
+        color: var(--ink-soft);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        font-family: var(--font-body);
+        font-size: 0.95rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s;
+        text-decoration: none;
+    }
+
+    .btn-back:hover {
+        border-color: var(--ink);
+        color: var(--ink);
+    }
+
+    /* Flash message inside card */
+    .edit-flash {
+        padding: 0.75rem 1rem;
+        border-radius: var(--radius-sm);
+        font-size: 0.875rem;
+        margin-bottom: 1.25rem;
+        border: 1px solid transparent;
+    }
+
+    .edit-flash.flash-success {
+        background: var(--accent-light);
+        color: var(--accent);
+        border-color: #b2cfbe;
+    }
+
+    .edit-flash.flash-error {
+        background: var(--danger-light);
+        color: var(--danger);
+        border-color: #f5c6c2;
+    }
+
+    @media (max-width: 600px) {
+        .edit-expense-section {
+            padding: 2rem 1rem;
+        }
+
+        .edit-card {
+            padding: 1.5rem;
+        }
+
+        .edit-actions {
+            flex-direction: column-reverse;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="edit-expense-section">
+    <div class="edit-expense-wrapper">
+
+        <!-- Header -->
+        <div class="edit-header">
+            <div class="edit-header-icon">
+                <i data-lucide="pencil-line"></i>
+            </div>
+            <h1 class="edit-title">Edit Expense</h1>
+            <p class="edit-subtitle">Update the details of your transaction below</p>
+        </div>
+
+        <!-- Card -->
+        <div class="edit-card">
+            {% if flashed_messages %}
+            <div>
+                {% for category, message in flashed_messages %}
+                <div class="edit-flash flash-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <form method="POST" action="{{ url_for('edit_expense', id=expense.id) }}">
+
+                <div class="form-group">
+                    <label for="amount">Amount (Rs)</label>
+                    <div class="input-with-prefix">
+                        <span class="input-prefix">₨</span>
+                        <input type="number" id="amount" name="amount"
+                               class="form-input" step="0.01" min="0.01" required
+                               value="{{ expense.amount }}">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="category">Category</label>
+                    <select id="category" name="category" class="form-input" required>
+                        <option value="" disabled>Select a category</option>
+                        {% for cat in categories %}
+                        <option value="{{ cat }}" {{ 'selected' if cat == expense.category }}>{{ cat }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="date">Date</label>
+                    <input type="date" id="date" name="date" class="form-input" required
+                           value="{{ expense.date }}">
+                </div>
+
+                <div class="form-group">
+                    <label for="description">Description (Optional)</label>
+                    <input type="text" id="description" name="description" class="form-input"
+                           maxlength="200" value="{{ expense.description or '' }}" placeholder="e.g. Weekly groceries">
+                </div>
+
+                <div class="edit-actions">
+                    <a href="{{ url_for('profile') }}" class="btn-back">Cancel</a>
+                    <button type="submit" class="btn-update">Update Expense</button>
+                </div>
+            </form>
+        </div>
+
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        if (typeof lucide !== 'undefined' && typeof lucide.createIcons === 'function') {
+            lucide.createIcons();
+        }
+    });
+</script>
+{% endblock %}

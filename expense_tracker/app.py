@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, session, send_from_directory
 from werkzeug.security import generate_password_hash, check_password_hash
 from database.db import init_db, seed_db, create_user, get_user_by_email, get_db
-from database.queries import get_user_by_id, get_summary_stats, get_recent_transactions, get_category_breakdown, insert_expense
+from database.queries import get_user_by_id, get_summary_stats, get_recent_transactions, get_category_breakdown, insert_expense, get_expense_by_id, update_expense
 from datetime import datetime, timedelta
 
 
@@ -191,6 +191,7 @@ def profile():
         },
         "transactions": [
             {
+                "id": tx["id"],
                 "date": tx["date"],
                 "desc": tx["desc"],
                 "category": tx["category"],
@@ -267,9 +268,64 @@ def add_expense():
                          categories=allowed_categories)
 
 
-@app.route("/expenses/<int:id>/edit")
+@app.route("/expenses/<int:id>/edit", methods=["GET", "POST"])
 def edit_expense(id):
-    return "Edit expense — coming in Step 8"
+    if not session.get("user_id"):
+        flash("Please log in to access this page.", "error")
+        return redirect(url_for("login"))
+
+    user_id = session["user_id"]
+    allowed_categories = ["Food", "Transport", "Bills", "Health", "Entertainment", "Shopping", "Other"]
+
+    if request.method == "POST":
+        amount_raw = request.form.get("amount", "").strip()
+        category = request.form.get("category", "").strip()
+        date = request.form.get("date", "").strip()
+        description = request.form.get("description", "").strip()
+
+        errors = []
+        try:
+            amount = float(amount_raw)
+            if amount <= 0:
+                errors.append("Amount must be a positive number greater than zero.")
+        except (ValueError, TypeError):
+            errors.append("Please enter a valid numeric amount.")
+
+        if category not in allowed_categories:
+            errors.append("Please select a valid category from the list.")
+
+        if not date:
+            errors.append("Date is required.")
+        else:
+            try:
+                datetime.strptime(date, "%Y-%m-%d")
+            except ValueError:
+                errors.append("Invalid date format. Please use YYYY-MM-DD.")
+
+        if errors:
+            for err in errors:
+                flash(err, "error")
+            return render_template("edit_expense.html",
+                                 expense={"id": id, "amount": amount_raw, "category": category, "date": date, "description": description},
+                                 categories=allowed_categories)
+
+        # Success: update in DB
+        with get_db() as db:
+            update_expense(db, id, user_id, amount, category, date, description)
+
+        flash("Expense updated successfully!", "success")
+        return redirect(url_for("profile"))
+
+    # GET request: load existing expense
+    expense = get_expense_by_id(id, user_id)
+    if not expense:
+        # Either expense doesn't exist or belongs to another user
+        return render_template("404.html"), 404
+
+    return render_template("edit_expense.html",
+                         expense=expense,
+                         categories=allowed_categories)
+
 
 
 @app.route("/expenses/<int:id>/delete")

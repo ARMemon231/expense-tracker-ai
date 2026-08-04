@@ -96,8 +96,8 @@
         <section class="profile-section">
             <div class="dashboard-card">
                 <h3 class="section-title">Recent Transactions</h3>
-                <div class="table-actions" style="display: flex; justify-content: flex-end; margin-bottom: 1rem;">
-                    <a href="{{ url_for('add_expense') }}" class="btn-add-expense" style="background-color: var(--accent); color: white; padding: 0.5rem 1rem; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 0.9rem;">+ Add Expense</a>
+                <div class="table-actions">
+                    <a href="{{ url_for('add_expense') }}" class="btn-add-expense">+ Add Expense</a>
                 </div>
                 <div class="table-responsive">
                     <table class="dashboard-table">
@@ -107,6 +107,7 @@
                                 <th>Description</th>
                                 <th>Category</th>
                                 <th class="text-right">Amount</th>
+                                <th class="text-center">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -120,6 +121,12 @@
                                     </span>
                                 </td>
                                 <td class="text-right amount">{{ tx.amount }}</td>
+                                <td class="text-center">
+                                    <a href="{{ url_for('edit_expense', id=tx.id) }}" class="action-btn action-edit" title="Edit expense">
+                                        <i data-lucide="pencil" class="action-icon"></i>
+                                        <span>Edit</span>
+                                    </a>
+                                </td>
                             </tr>
                             {% endfor %}
                         </tbody>
