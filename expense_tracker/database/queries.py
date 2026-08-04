@@ -76,7 +76,7 @@ def get_recent_transactions(user_id, limit=10, date_from=None, date_to=None):
     Returns the most recent expenses for the user.
     """
     with get_db() as conn:
-        query_parts = ['SELECT date, description, category, amount FROM expenses WHERE user_id = ?']
+        query_parts = ['SELECT id, date, description, category, amount FROM expenses WHERE user_id = ?']
         params = [user_id]
 
         if date_from and date_to:
@@ -91,6 +91,7 @@ def get_recent_transactions(user_id, limit=10, date_from=None, date_to=None):
 
         return [
             {
+                "id": row['id'],
                 "date": row['date'],
                 "desc": row['description'],
                 "category": row['category'],
@@ -147,3 +148,26 @@ def get_category_breakdown(user_id, date_from=None, date_to=None):
             item.pop('precise_pct')
 
         return breakdown
+
+def get_expense_by_id(expense_id, user_id):
+    """
+    Fetches a single expense row only if it belongs to the given user.
+    Returns None if not found or doesn't belong to user.
+    """
+    with get_db() as conn:
+        row = conn.execute(
+            'SELECT id, amount, category, date, description FROM expenses WHERE id = ? AND user_id = ?',
+            (expense_id, user_id)
+        ).fetchone()
+        return row
+
+def update_expense(db, expense_id, user_id, amount, category, date, description):
+    """
+    Updates an expense record.
+    Ensures ownership with user_id in WHERE clause.
+    description should be None if blank.
+    """
+    desc = description if description and description.strip() else None
+    query = 'UPDATE expenses SET amount = ?, category = ?, date = ?, description = ? WHERE id = ? AND user_id = ?'
+    db.execute(query, (amount, category, date, desc, expense_id, user_id))
+    db.commit()
