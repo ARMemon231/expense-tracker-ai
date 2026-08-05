@@ -171,3 +171,11 @@ def update_expense(db, expense_id, user_id, amount, category, date, description)
     query = 'UPDATE expenses SET amount = ?, category = ?, date = ?, description = ? WHERE id = ? AND user_id = ?'
     db.execute(query, (amount, category, date, desc, expense_id, user_id))
     db.commit()
+
+def delete_expense(db, expense_id, user_id):
+    """
+    Permanently deletes an expense record if it belongs to the given user.
+    """
+    query = 'DELETE FROM expenses WHERE id = ? AND user_id = ?'
+    db.execute(query, (expense_id, user_id))
+    db.commit()

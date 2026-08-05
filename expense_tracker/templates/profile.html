@@ -122,10 +122,14 @@
                                 </td>
                                 <td class="text-right amount">{{ tx.amount }}</td>
                                 <td class="text-center">
-                                    <a href="{{ url_for('edit_expense', id=tx.id) }}" class="action-btn action-edit" title="Edit expense">
-                                        <i data-lucide="pencil" class="action-icon"></i>
-                                        <span>Edit</span>
-                                    </a>
+                                    <div class="actions-row">
+                                        <a href="{{ url_for('edit_expense', id=tx.id) }}" class="action-link-edit">Edit</a>
+                                        <form action="{{ url_for('delete_expense', id=tx.id) }}" method="POST" class="inline-form">
+                                            <button type="submit" class="action-btn-delete" onclick="return confirm('Delete this expense?')">
+                                                Delete
+                                            </button>
+                                        </form>
+                                    </div>
                                 </td>
                             </tr>
                             {% endfor %}

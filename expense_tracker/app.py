@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, session, send_from_directory
 from werkzeug.security import generate_password_hash, check_password_hash
 from database.db import init_db, seed_db, create_user, get_user_by_email, get_db
-from database.queries import get_user_by_id, get_summary_stats, get_recent_transactions, get_category_breakdown, insert_expense, get_expense_by_id, update_expense
+from database.queries import get_user_by_id, get_summary_stats, get_recent_transactions, get_category_breakdown, insert_expense, get_expense_by_id, update_expense, delete_expense
 from datetime import datetime, timedelta
 
 
@@ -328,9 +328,26 @@ def edit_expense(id):
 
 
 
-@app.route("/expenses/<int:id>/delete")
+@app.route("/expenses/<int:id>/delete", methods=["POST"])
 def delete_expense(id):
-    return "Delete expense — coming in Step 9"
+    if not session.get("user_id"):
+        flash("Please log in to access this page.", "error")
+        return redirect(url_for("login"))
+
+    user_id = session["user_id"]
+
+    # Verify expense exists and belongs to the user
+    expense = get_expense_by_id(id, user_id)
+    if not expense:
+        return "Not Found", 404
+
+    # Delete the expense
+    with get_db() as db:
+        from database.queries import delete_expense as db_delete_expense
+        db_delete_expense(db, id, user_id)
+
+    flash("Expense deleted successfully!", "success")
+    return redirect(url_for("profile"))
 
 
 if __name__ == "__main__":
